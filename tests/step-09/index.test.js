@@ -129,6 +129,7 @@ test('Parse SQL Query with INNER JOIN and WHERE Clause', async () => {
 
 test('Execute SQL Query with INNER JOIN', async () => {
     const query = 'SELECT student.name, enrollment.course FROM student INNER JOIN enrollment ON student.id=enrollment.student_id';
+
     const result = await executeSELECTQuery(query);
     /*
     result = [
