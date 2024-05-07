@@ -16,7 +16,6 @@ async function executeSELECTQuery(query) {
     const { fields, table, whereClauses, joinTable, joinCondition } = parseQuery(query);
     let data = await readCSV(`${table}.csv`);
 
-    // Perform INNER JOIN if specified
     if (joinTable && joinCondition) {
         const joinData = await readCSV(`${joinTable}.csv`);
         data = data.flatMap(mainRow => {
@@ -36,17 +35,19 @@ async function executeSELECTQuery(query) {
         });
     }
 
-// Apply WHERE clause filtering after JOIN (or on the original data if no join)
-const filteredData = whereClauses.length > 0 ? data.filter(row => whereClauses.every(clause => evaluateCondition(row, clause)))
-    : data;   // Select the specified fields
+    const filteredData = whereClauses.length > 0
+        ? data.filter(row => whereClauses.every(clause => evaluateCondition(row, clause)))
+        : data;
+
+    // Select the specified fields and return the result
     return filteredData.map(row => {
         const selectedRow = {};
         fields.forEach(field => {
-            // Assuming 'field' is just the column name without table prefix
             selectedRow[field] = row[field];
         });
         return selectedRow;
     });
 }
+
 
 module.exports = executeSELECTQuery;
